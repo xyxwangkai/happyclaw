@@ -260,3 +260,6 @@ help: ## 显示帮助
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
+
+config_cp: ## 复制配置
+	sh ./scripts/config_copy.sh

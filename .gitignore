@@ -38,13 +38,10 @@ bun.lockb
 *.tsbuildinfo
 
 # Local tooling metadata
-.claude/
 .mcp.json
 /.omc/
 .trae/
 .coco/
-.agent/
-.agents/
 skills-lock.json
 --connect
 log/
