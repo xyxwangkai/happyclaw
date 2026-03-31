@@ -4,6 +4,11 @@
       "path": "~",
       "allowReadWrite": true,
       "description": "Full home directory access"
+    },
+    {
+      "path": "/opt/tiger",
+      "allowReadWrite": true,
+      "description": "Full home directory access"
     }
   ],
   "blockedPatterns": [],

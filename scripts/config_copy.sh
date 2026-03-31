@@ -16,6 +16,7 @@ create_symlink_if_not_exists() {
 mkdir -p ./.claude
 
 # 创建配置文件的符号链接
+create_symlink_if_not_exists "../project_env/happyclaw/.env" ".env"
 create_symlink_if_not_exists "$HOME/.claude/skills/" ".claude/skills/"
 
 echo "符号链接创建完成"

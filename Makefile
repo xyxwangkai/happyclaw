@@ -1,4 +1,4 @@
-.PHONY: dev dev-backend dev-web build build-backend build-web start \
+.PHONY: dev dev-backend dev-web build build-backend build-web start stop \
        typecheck typecheck-backend typecheck-web typecheck-agent-runner \
        format format-check install clean reset-init update-sdk ensure-latest-sdk sync-types \
        backup restore help _ensure-docker-image
@@ -27,6 +27,18 @@ dev: ## 启动前后端（首次自动安装依赖和构建容器镜像）
 	@$(PKG) --prefix container/agent-runner run build --silent 2>/dev/null || $(PKG) --prefix container/agent-runner run build
 	@echo "🚀 使用 $(PKG) 启动..."
 	$(PKG) run dev:all
+
+dev-all:
+	@echo "🚀 启动后端服务..."
+	$(RUNNER) &
+	BACKEND_PID=$$!; \
+	echo "✅ 后端服务已启动 (PID: $$BACKEND_PID)"; \
+	sleep 5; \
+	echo "🚀 启动前端服务..."; \
+	cd web && $(PKG) run dev; \
+	echo "✅ 前端服务已启动"; \
+	echo "🛑 停止后端服务 (PID: $$BACKEND_PID)"; \
+	kill $$BACKEND_PID 2>/dev/null || true
 
 dev-backend: ## 仅启动后端（bun 直接跑 TS，node 用 tsx）
 	$(RUNNER)
@@ -112,6 +124,13 @@ else
 	if [ "$$NEED_AR" = "1" ]; then echo "🔨 检测到 agent-runner 变更，重新编译..."; cd container/agent-runner && npm run build; else echo "✅ agent-runner 无变更，跳过编译"; fi
 	node dist/index.js
 endif
+
+stop: ## 停止所有服务进程
+	@echo "🛑 正在停止后端服务..."
+	@lsof -ti:8090 -sTCP:LISTEN | xargs kill -9 2>/dev/null || true
+	@echo "🛑 正在停止前端服务..."
+	@lsof -ti:5173 -sTCP:LISTEN | xargs kill -9 2>/dev/null || true
+	
 
 # ─── Quality ─────────────────────────────────────────────────
 
